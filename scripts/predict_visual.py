@@ -1,8 +1,12 @@
 import argparse
 from pathlib import Path
+import sys
 
 import torch
 from PIL import Image
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 from src.preprocessing import full384_eval_transform
 from src.visual_model import load_full384_checkpoint, smoke_probability
