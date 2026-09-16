@@ -19,9 +19,14 @@ TFM-FIgLib/
 ├── scripts/
 │   ├── predict_visual.py
 │   └── predict_temporal.py
+├── training/
+│   ├── train_visual_reference.py
+│   └── train_temporal_reference.py
 ├── models/
 │   ├── best_temporal_gru_full384_38.pt
 │   └── README.md
+├── results/
+│   └── key_metrics.json
 ├── sample_data/
 │   ├── example_probabilities.csv
 │   └── README.md
@@ -95,7 +100,7 @@ Resultados principales:
 | Mediana hasta primera alerta | 361 s | 210.5 s |
 | Eventos no detectados | 6 | 2 |
 
-El checkpoint temporal sí se incluye en `models/best_temporal_gru_full384_38.pt`.
+El checkpoint temporal se incluye directamente en `models/best_temporal_gru_full384_38.pt`.
 
 ## Instalación
 
@@ -126,11 +131,17 @@ python scripts/predict_temporal.py \
   --checkpoint models/best_temporal_gru_full384_38.pt
 ```
 
-El CSV debe contener `timestamp` y `p_smoke`.
+El CSV de ejemplo contiene `p_smoke` y `feat_dt` ya normalizado. Si se parte únicamente de timestamps, debe utilizarse el mismo factor de normalización temporal del experimento original; el checkpoint no serializa ese valor.
+
+## Código de entrenamiento
+
+La carpeta `training/` contiene implementaciones de referencia construidas a partir de la configuración experimental documentada en la memoria. Sirven para reproducir la arquitectura y los hiperparámetros principales. Los experimentos históricos se realizaron originalmente en notebooks de Google Colab y no todos los notebooks intermedios se conservan como artefactos autocontenidos.
 
 ## Reproducibilidad
 
-Los experimentos completos se ejecutaron sobre Google Colab y Google Drive. Este repositorio conserva el código y los artefactos necesarios para revisar la metodología sin redistribuir las decenas de miles de imágenes del dataset ni resultados gráficos pesados. Los detalles están en `docs/reproducibility.md` y en el Anexo D de la memoria.
+Los experimentos completos se ejecutaron sobre Google Colab y Google Drive. Este repositorio conserva el código, el checkpoint temporal, la referencia al checkpoint visual, un notebook original limpio, métricas exportadas y un pequeño sample de formato. No se redistribuyen las decenas de miles de imágenes del dataset ni resultados gráficos pesados.
+
+Los detalles metodológicos y las limitaciones de reproducción se encuentran en `docs/reproducibility.md` y en el Anexo D de la memoria.
 
 ## Referencias
 
