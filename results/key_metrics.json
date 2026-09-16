@@ -1,0 +1,79 @@
+{
+  "dataset": {
+    "sequences": 519,
+    "physical_images_approx": 41187,
+    "supervised_visual_images": 23480,
+    "split_by_event": {
+      "train_images": 15907,
+      "train_events": 233,
+      "validation_images": 3812,
+      "validation_events": 50,
+      "test_images": 3761,
+      "test_events": 50
+    }
+  },
+  "full224": {
+    "balanced_accuracy": 0.7450,
+    "precision": 0.8220,
+    "recall": 0.6689,
+    "auc": 0.7988,
+    "fpr": 0.1788,
+    "false_positives": 301
+  },
+  "full384": {
+    "accuracy": 0.78756,
+    "balanced_accuracy": 0.79894,
+    "precision": 0.90195,
+    "recall": 0.69057,
+    "f1": 0.78223,
+    "auc": 0.83860,
+    "fpr": 0.09269,
+    "tn": 1527,
+    "fp": 156,
+    "fn": 643,
+    "tp": 1435
+  },
+  "multiscale": {
+    "balanced_accuracy": 0.7912,
+    "precision": 0.8412,
+    "recall": 0.7594,
+    "f1": 0.7982,
+    "auc": 0.8493,
+    "fpr": 0.1771
+  },
+  "rolling_mean_5": {
+    "post_t0": 0.88,
+    "before_300s": 0.36,
+    "before_600s": 0.58,
+    "before_900s": 0.72,
+    "before_1800s": 0.88,
+    "clear_pre_alert": 0.18,
+    "median_delay_s": 361,
+    "mean_delay_s": 488.75,
+    "missed_events": 6
+  },
+  "gru": {
+    "sequence_length": 8,
+    "hidden_size": 32,
+    "validation_auc_best_checkpoint": 0.8628440584761514,
+    "validation_threshold": 0.85,
+    "post_t0": 0.96,
+    "before_300s": 0.56,
+    "before_600s": 0.72,
+    "before_900s": 0.90,
+    "before_1800s": 0.94,
+    "clear_pre_alert": 0.28,
+    "median_delay_s": 210.5,
+    "mean_delay_s": 394.1,
+    "missed_events": 2
+  },
+  "paired_event_bootstrap": {
+    "replicates": 10000,
+    "balanced_accuracy_delta": 0.053906,
+    "balanced_accuracy_ci95": [0.011823, 0.094373],
+    "precision_delta": 0.07995,
+    "precision_ci95": [0.029951, 0.132518],
+    "fpr_delta": -0.086156,
+    "fpr_ci95": [-0.149079, -0.029908]
+  }
+}
