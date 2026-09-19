@@ -17,10 +17,10 @@ El checkpoint visual final `best_resnet18_full_511_384_controlled.pt` ocupa apro
 
 https://drive.google.com/file/d/1_8itlXVmfy9Htq8BqSTipIAhSl4rKMRI/view
 
-Colócalo localmente como:
+La ruta esperada para la inferencia visual es:
 
 ```text
 models/best_resnet18_full_511_384_controlled.pt
 ```
 
-antes de ejecutar `scripts/predict_visual.py`.
+Esta ubicación es la utilizada por los ejemplos del repositorio.
