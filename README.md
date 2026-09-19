@@ -1,6 +1,8 @@
 # FIgLib Smoke Detection — ResNet18 + Temporal GRU
 
-Bloque de visión artificial y detección temporal del Trabajo Fin de Máster **Sistema multimodal para la detección temprana de incendios forestales mediante inteligencia artificial** (UCM, 2025–2026).
+Bloque de visión artificial y detección temporal desarrollado por **Antón Soto** como parte de **VIGÍA**, el sistema multimodal del Trabajo Fin de Máster **Sistema multimodal para la detección temprana de incendios forestales mediante inteligencia artificial** (UCM, 2025–2026).
+
+Este repositorio corresponde específicamente al módulo **FIgLib/HPWREN** de VIGÍA: clasificación visual de humo y detección temporal temprana sobre cámaras fijas. No representa por sí solo el sistema multimodal completo.
 
 El objetivo de este repositorio es estudiar dos preguntas concretas sobre cámaras fijas de vigilancia:
 
@@ -36,31 +38,21 @@ La GRU mejora cobertura y rapidez de detección, a costa de una mayor sensibilid
 
 ## Arquitectura
 
-```text
-Frame de cámara
-      │
-      ▼
-ResNet18 Full384
-      │
-      ▼
-p(humo | imagen)
-      │
-      ├── p_t
-      ├── Δp_t
-      └── Δt_t
-             │
-             ▼
-        ventana causal
-        de 8 observaciones
-             │
-             ▼
-            GRU
-             │
-             ▼
-      probabilidad de alerta
+```mermaid
+flowchart LR
+    A["Frame de cámara"] --> B["ResNet18 · Full384"]
+    B --> C["p(humo | imagen)"]
+    C --> D["p_t"]
+    C --> E["Δp_t"]
+    C --> F["Δt_t"]
+    D --> G["Ventana causal · 8 observaciones"]
+    E --> G
+    F --> G
+    G --> H["GRU temporal"]
+    H --> I["Probabilidad de alerta"]
 ```
 
-La **ResNet18** clasifica cada frame de forma independiente. La **GRU** incorpora la evolución reciente de la señal visual.
+La **ResNet18** clasifica cada frame de forma independiente. La **GRU** incorpora la evolución reciente de la señal visual para transformar predicciones aisladas en evidencia temporal de alerta.
 
 ## Dataset y particionado
 
@@ -208,6 +200,10 @@ La documentación metodológica completa y las limitaciones de reproducción est
 
 - Dewangan, A. et al. (2022). *FIgLib & SmokeyNet: Dataset and Deep Learning Model for Real-Time Wildland Fire Smoke Detection*. Remote Sensing, 14(4), 1007. https://doi.org/10.3390/rs14041007
 - Cho, K. et al. (2014). *Learning Phrase Representations using RNN Encoder--Decoder for Statistical Machine Translation*. https://doi.org/10.3115/v1/D14-1179
+
+## Licencia
+
+Este repositorio se distribuye bajo licencia **MIT**. Consulta el archivo [`LICENSE`](LICENSE).
 
 ## Autor
 
