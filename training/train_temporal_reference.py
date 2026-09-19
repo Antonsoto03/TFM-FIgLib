@@ -9,8 +9,12 @@ original; el checkpoint no serializa ese factor.
 
 import argparse
 from pathlib import Path
+import sys
 
 import numpy as np
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -62,7 +66,7 @@ def evaluate(model, loader, device):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Entrenamiento de referencia de la GRU temporal")
     parser.add_argument("--train-csv", required=True)
     parser.add_argument("--val-csv", required=True)
     parser.add_argument("--epochs", type=int, default=50)
