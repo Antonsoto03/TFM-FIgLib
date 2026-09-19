@@ -1,6 +1,6 @@
-# Sample de datos
+# Datos de ejemplo
 
-El dataset completo FIgLib/HPWREN no se incluye en el repositorio. Esta carpeta contiene únicamente ejemplos pequeños para comprobar el formato de entrada de los scripts.
+El dataset completo FIgLib/HPWREN no se incluye en el repositorio. Esta carpeta contiene ejemplos mínimos para comprobar el formato de entrada esperado por los scripts.
 
 `example_probabilities.csv` representa una secuencia ficticia de probabilidades visuales. Sus valores **no pertenecen al benchmark ni deben utilizarse para calcular métricas**.
 
