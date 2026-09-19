@@ -1,15 +1,87 @@
-# TFM-FIgLib
+# FIgLib Smoke Detection — ResNet18 + Temporal GRU
 
-Repositorio asociado al bloque **FIgLib/HPWREN** del Trabajo Fin de Máster *Sistema multimodal para la detección temprana de incendios forestales mediante inteligencia artificial*.
+Bloque de visión artificial y detección temporal del Trabajo Fin de Máster **Sistema multimodal para la detección temprana de incendios forestales mediante inteligencia artificial** (UCM, 2025–2026).
 
-Este repositorio recoge el material necesario para revisar y reproducir la parte de clasificación visual y detección temporal desarrollada sobre FIgLib/HPWREN. El dataset completo no se redistribuye por tamaño y derechos de uso; se incluye un pequeño ejemplo de estructura de datos y las instrucciones necesarias para organizar el resto.
+El objetivo de este repositorio es estudiar dos preguntas concretas sobre cámaras fijas de vigilancia:
 
-## Estructura
+1. **¿Cuánta información visual se pierde al reducir la resolución de entrada?**
+2. **¿Puede la evolución temporal de la probabilidad de humo mejorar una alerta basada en frames independientes?**
+
+El trabajo se desarrolla sobre **FIgLib/HPWREN**, con particionado a nivel de evento para evitar fuga de información entre entrenamiento, validación y test.
+
+## Resultados principales
+
+### Clasificación visual
+
+| Modelo | Balanced Accuracy | Precision | Recall | AUC | FPR | Falsos positivos |
+|---|---:|---:|---:|---:|---:|---:|
+| Full224 | 0.7450 | 0.8220 | 0.6689 | 0.7988 | 0.1788 | 301 |
+| **Full384** | **0.7989** | **0.9019** | **0.6906** | **0.8386** | **0.0927** | **156** |
+
+El aumento de resolución de 224×224 a 384×384 redujo los falsos positivos de **301 a 156** en el conjunto de test. La comparación se validó mediante bootstrap pareado por evento con 10 000 réplicas.
+
+### Detección temporal
+
+| Métrica | Media móvil (5) | GRU |
+|---|---:|---:|
+| Detección post-`t=0` | 0.88 | **0.96** |
+| ≤ 5 min | 0.36 | **0.56** |
+| ≤ 10 min | 0.58 | **0.72** |
+| ≤ 15 min | 0.72 | **0.90** |
+| ≤ 30 min | 0.88 | **0.94** |
+| Mediana hasta primera alerta | 361 s | **210.5 s** |
+| Eventos no detectados | 6 | **2** |
+
+La GRU mejora cobertura y rapidez de detección, a costa de una mayor sensibilidad pre-evento (`0.18 → 0.28`). Este compromiso se controla mediante el umbral de decisión.
+
+## Arquitectura
+
+```text
+Frame de cámara
+      │
+      ▼
+ResNet18 Full384
+      │
+      ▼
+p(humo | imagen)
+      │
+      ├── p_t
+      ├── Δp_t
+      └── Δt_t
+             │
+             ▼
+        ventana causal
+        de 8 observaciones
+             │
+             ▼
+            GRU
+             │
+             ▼
+      probabilidad de alerta
+```
+
+La **ResNet18** clasifica cada frame de forma independiente. La **GRU** incorpora la evolución reciente de la señal visual.
+
+## Dataset y particionado
+
+FIgLib/HPWREN está organizado en secuencias asociadas a eventos. En los experimentos se trabajó con aproximadamente **41 187 imágenes físicas**, de las cuales **23 480** se utilizaron en el entrenamiento supervisado visual.
+
+La separación entre entrenamiento, validación y test se realizó **a nivel de evento**, de forma que ningún incendio aporta frames a más de un subconjunto.
+
+Etiquetado visual:
+
+- negativo: `t <= -1200 s`;
+- positivo: `t >= +900 s`;
+- región intermedia: excluida del entrenamiento visual supervisado.
+
+Para el modelo temporal, la etiqueta positiva se define desde `t >= 0 s`.
+
+> `t=0` es una referencia temporal del evento y no debe interpretarse como el instante físico exacto de ignición.
+
+## Estructura del repositorio
 
 ```text
 TFM-FIgLib/
-├── README.md
-├── requirements.txt
 ├── notebooks/
 │   └── comparacion_figlib_224_vs_384.ipynb
 ├── src/
@@ -30,25 +102,15 @@ TFM-FIgLib/
 ├── sample_data/
 │   ├── example_probabilities.csv
 │   └── README.md
-└── docs/
-    └── reproducibility.md
+├── docs/
+│   └── reproducibility.md
+├── requirements.txt
+└── README.md
 ```
-
-## Datos y particionado
-
-FIgLib/HPWREN está organizado en secuencias asociadas a eventos. La separación entre entrenamiento, validación y test se realizó **a nivel de evento**, evitando que imágenes temporalmente próximas del mismo incendio apareciesen en subconjuntos distintos.
-
-Para el clasificador visual se utilizó un etiquetado conservador:
-
-- negativo: `t <= -1200 s`;
-- positivo: `t >= +900 s`;
-- región intermedia: excluida del entrenamiento visual supervisado.
-
-Para el modelo temporal, la etiqueta positiva se definió desde `t >= 0 s`, manteniendo `t <= -1200 s` como región negativa y excluyendo la franja intermedia de la pérdida supervisada.
 
 ## Modelo visual Full384
 
-Arquitectura: **ResNet18** con entrada 384x384.
+Arquitectura: **ResNet18** con entrada 384×384.
 
 Preprocesado de evaluación:
 
@@ -56,64 +118,46 @@ Preprocesado de evaluación:
 Resize(440) -> CenterCrop(384) -> ToTensor() -> ImageNet normalization
 ```
 
-Resultados principales sobre test:
-
-| Métrica | Full384 |
-|---|---:|
-| Balanced Accuracy | 0.7989 |
-| Precision | 0.9019 |
-| Recall | 0.6906 |
-| AUC | 0.8386 |
-| FPR | 0.0927 |
-
-El checkpoint visual final (`best_resnet18_full_511_384_controlled.pt`) ocupa aproximadamente 44.8 MB y se mantiene en Google Drive para no duplicar un binario grande en GitHub.
+El checkpoint visual final (`best_resnet18_full_511_384_controlled.pt`) ocupa aproximadamente 44.8 MB y se mantiene en Google Drive:
 
 **Checkpoint Full384:** https://drive.google.com/file/d/1_8itlXVmfy9Htq8BqSTipIAhSl4rKMRI/view
 
 ## Modelo temporal GRU
 
-La GRU recibe por observación tres variables:
+Cada observación contiene:
 
 ```text
 p_t, delta_p_t, delta_t
 ```
 
-Se utilizan ventanas causales de ocho observaciones. La configuración del checkpoint final es:
+Configuración del checkpoint:
 
 - `input_size = 3`;
 - `hidden_size = 32`;
 - una capa GRU;
 - cabeza `32 -> 16 -> 1`;
 - ReLU + Dropout(0.2);
-- umbral operativo seleccionado en validation: `0.85`.
+- ventana causal de 8 observaciones;
+- umbral seleccionado en validación: `0.85`.
 
-Resultados principales:
-
-| Métrica | Rolling mean 5 | GRU |
-|---|---:|---:|
-| Detección post-t=0 | 0.88 | 0.96 |
-| Antes de 300 s | 0.36 | 0.56 |
-| Antes de 600 s | 0.58 | 0.72 |
-| Antes de 900 s | 0.72 | 0.90 |
-| Antes de 1800 s | 0.88 | 0.94 |
-| Clear-pre alert | 0.18 | 0.28 |
-| Mediana hasta primera alerta | 361 s | 210.5 s |
-| Eventos no detectados | 6 | 2 |
-
-El checkpoint temporal se incluye directamente en `models/best_temporal_gru_full384_38.pt`.
+El checkpoint temporal se incluye en `models/best_temporal_gru_full384_38.pt`.
 
 ## Instalación
 
 ```bash
+git clone https://github.com/Antonsoto03/TFM-FIgLib.git
+cd TFM-FIgLib
+
 python -m venv .venv
 source .venv/bin/activate   # Linux/macOS
 # .venv\Scripts\activate  # Windows
+
 pip install -r requirements.txt
 ```
 
-## Uso básico
+## Inferencia
 
-### Inferencia visual
+### Clasificador visual
 
 ```bash
 python scripts/predict_visual.py \
@@ -121,9 +165,7 @@ python scripts/predict_visual.py \
   --checkpoint models/best_resnet18_full_511_384_controlled.pt
 ```
 
-El checkpoint visual debe estar disponible localmente en la ruta indicada antes de ejecutar la inferencia.
-
-### Inferencia temporal
+### Modelo temporal
 
 ```bash
 python scripts/predict_temporal.py \
@@ -133,21 +175,35 @@ python scripts/predict_temporal.py \
 
 El CSV de ejemplo contiene `p_smoke` y `feat_dt` ya normalizado. Si se parte únicamente de timestamps, debe utilizarse el mismo factor de normalización temporal del experimento original; el checkpoint no serializa ese valor.
 
-## Código de entrenamiento
+## Entrenamiento y reproducibilidad
 
-La carpeta `training/` contiene implementaciones de referencia construidas a partir de la configuración experimental documentada en la memoria. Sirven para reproducir la arquitectura y los hiperparámetros principales. Los experimentos históricos se realizaron originalmente en notebooks de Google Colab y no todos los notebooks intermedios se conservan como artefactos autocontenidos.
+La carpeta `training/` contiene implementaciones de referencia basadas en la configuración experimental documentada en el TFM. Los experimentos históricos se ejecutaron principalmente en Google Colab y Google Drive, por lo que no todos los notebooks intermedios se conservan como artefactos autocontenidos.
 
-## Reproducibilidad
+El repositorio conserva:
 
-Los experimentos completos se ejecutaron sobre Google Colab y Google Drive. Este repositorio conserva el código, el checkpoint temporal, la referencia al checkpoint visual, un notebook de comparación de resolución, métricas exportadas y un pequeño ejemplo de formato. No se redistribuyen las decenas de miles de imágenes del dataset ni resultados gráficos pesados.
+- código de inferencia;
+- arquitectura visual y temporal;
+- checkpoint temporal;
+- referencia al checkpoint visual;
+- métricas exportadas;
+- notebook de comparación de resolución;
+- datos de ejemplo para comprobar el formato de entrada.
 
-Los detalles metodológicos y las limitaciones de reproducción se encuentran en `docs/reproducibility.md` y en el Anexo D de la memoria.
+La documentación metodológica completa y las limitaciones de reproducción están en [`docs/reproducibility.md`](docs/reproducibility.md).
+
+## Limitaciones
+
+- FIgLib es un benchmark basado en eventos y no equivale a una vigilancia continua 24/7.
+- Una FPR por frame no debe interpretarse directamente como falsas alarmas por cámara y día.
+- El rendimiento puede degradarse en cámaras, paisajes o condiciones meteorológicas distintas a las del dataset.
+- El factor exacto de normalización de `feat_dt` no está serializado en el checkpoint temporal original.
 
 ## Referencias
 
-- Dewangan et al. (2022), *FIgLib & SmokeyNet: Dataset and Deep Learning Model for Real-Time Wildland Fire Smoke Detection*, Remote Sensing, 14(4), 1007. https://doi.org/10.3390/rs14041007
-- Cho et al. (2014), *Learning Phrase Representations using RNN Encoder--Decoder for Statistical Machine Translation*. https://doi.org/10.3115/v1/D14-1179
+- Dewangan, A. et al. (2022). *FIgLib & SmokeyNet: Dataset and Deep Learning Model for Real-Time Wildland Fire Smoke Detection*. Remote Sensing, 14(4), 1007. https://doi.org/10.3390/rs14041007
+- Cho, K. et al. (2014). *Learning Phrase Representations using RNN Encoder--Decoder for Statistical Machine Translation*. https://doi.org/10.3115/v1/D14-1179
 
 ## Autor
 
-Antón Soto — Máster en Big Data, Data Science e Inteligencia Artificial, Universidad Complutense de Madrid.
+**Antón Soto**  
+Máster en Big Data, Data Science e Inteligencia Artificial — Universidad Complutense de Madrid
