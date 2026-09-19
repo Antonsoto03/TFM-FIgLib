@@ -83,6 +83,9 @@ Para el modelo temporal, la etiqueta positiva se define desde `t >= 0 s`.
 ```text
 TFM-FIgLib/
 ├── notebooks/
+│   ├── 01_full384_visual_training.ipynb
+│   ├── 02_temporal_gru_training.ipynb
+│   ├── 03_paired_bootstrap_224_vs_384.ipynb
 │   └── comparacion_figlib_224_vs_384.ipynb
 ├── src/
 │   ├── visual_model.py
@@ -186,8 +189,11 @@ El repositorio conserva:
 - checkpoint temporal;
 - referencia al checkpoint visual;
 - métricas exportadas;
+- notebooks reproducibles de entrenamiento visual, entrenamiento temporal y bootstrap pareado;
 - notebook de comparación de resolución;
 - datos de ejemplo para comprobar el formato de entrada.
+
+Los notebooks reproducibles se han reconstruido a partir de la configuración final documentada y de los artefactos conservados de los experimentos. No se presentan como los notebooks históricos originales de Colab.
 
 La documentación metodológica completa y las limitaciones de reproducción están en [`docs/reproducibility.md`](docs/reproducibility.md).
 
