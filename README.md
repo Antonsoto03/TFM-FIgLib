@@ -121,7 +121,7 @@ python scripts/predict_visual.py \
   --checkpoint models/best_resnet18_full_511_384_controlled.pt
 ```
 
-Descarga previamente el checkpoint visual desde el enlace de Drive si no está disponible localmente.
+El checkpoint visual debe estar disponible localmente en la ruta indicada antes de ejecutar la inferencia.
 
 ### Inferencia temporal
 
@@ -139,7 +139,7 @@ La carpeta `training/` contiene implementaciones de referencia construidas a par
 
 ## Reproducibilidad
 
-Los experimentos completos se ejecutaron sobre Google Colab y Google Drive. Este repositorio conserva el código, el checkpoint temporal, la referencia al checkpoint visual, un notebook original limpio, métricas exportadas y un pequeño sample de formato. No se redistribuyen las decenas de miles de imágenes del dataset ni resultados gráficos pesados.
+Los experimentos completos se ejecutaron sobre Google Colab y Google Drive. Este repositorio conserva el código, el checkpoint temporal, la referencia al checkpoint visual, un notebook de comparación de resolución, métricas exportadas y un pequeño ejemplo de formato. No se redistribuyen las decenas de miles de imágenes del dataset ni resultados gráficos pesados.
 
 Los detalles metodológicos y las limitaciones de reproducción se encuentran en `docs/reproducibility.md` y en el Anexo D de la memoria.
 
