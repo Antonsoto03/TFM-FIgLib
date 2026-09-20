@@ -1,5 +1,7 @@
 # FIgLib Smoke Detection — ResNet18 + Temporal GRU
 
+![CI](https://github.com/Antonsoto03/TFM-FIgLib/actions/workflows/ci.yml/badge.svg)
+
 Bloque de visión artificial y detección temporal desarrollado por **Antón Soto** como parte de **VIGÍA**, el sistema multimodal del Trabajo Fin de Máster **Sistema multimodal para la detección temprana de incendios forestales mediante inteligencia artificial** (UCM, 2025–2026).
 
 Este repositorio corresponde específicamente al módulo **FIgLib/HPWREN** de VIGÍA: clasificación visual de humo y detección temporal temprana sobre cámaras fijas. No representa por sí solo el sistema multimodal completo.
@@ -116,6 +118,8 @@ TFM-FIgLib/
 │   └── README.md
 ├── docs/
 │   └── reproducibility.md
+├── tests/
+│   └── test_models.py
 ├── thesis/
 │   ├── Memoria.pdf
 │   ├── Grupo1_Deteccion_Incendios.zip
@@ -126,6 +130,7 @@ TFM-FIgLib/
 │       ├── Anexo_D_FIgLib.pdf
 │       └── Anexo_E_MITECO.pdf
 ├── requirements.txt
+├── requirements-dev.txt
 └── README.md
 ```
 
@@ -214,6 +219,15 @@ El repositorio conserva:
 Los notebooks reproducibles se han reconstruido a partir de la configuración final documentada y de los artefactos conservados de los experimentos. No se presentan como los notebooks históricos originales de Colab.
 
 La documentación metodológica completa y las limitaciones de reproducción están en [`docs/reproducibility.md`](docs/reproducibility.md).
+
+## Validación automática
+
+El repositorio incluye pruebas mínimas de arquitectura para comprobar que los modelos visual y temporal producen salidas con las dimensiones esperadas. GitHub Actions ejecuta estos *smoke tests* automáticamente en cada `push` a `main` y en cada Pull Request.
+
+```bash
+pip install -r requirements-dev.txt
+pytest -q
+```
 
 ## Limitaciones
 
