@@ -11,6 +11,23 @@ El objetivo de este repositorio es estudiar dos preguntas concretas sobre cámar
 
 El trabajo se desarrolla sobre **FIgLib/HPWREN**, con particionado a nivel de evento para evitar fuga de información entre entrenamiento, validación y test.
 
+
+## Trabajo Fin de Máster completo
+
+Este repositorio documenta principalmente el módulo **FIgLib/HPWREN** desarrollado por **Antón Soto Martínez** dentro de VIGÍA. La memoria completa corresponde al trabajo conjunto del equipo del TFM.
+
+- 📄 [Memoria completa](thesis/Memoria.pdf)
+- [Anexo A](thesis/Anexos/Anexo_A.pdf)
+- [Anexo B — Repositorios y código](thesis/Anexos/Anexo_B_repositorios.pdf)
+- [Anexo C](thesis/Anexos/Anexo_C.pdf)
+- [Anexo D — FIgLib/HPWREN](thesis/Anexos/Anexo_D_FIgLib.pdf)
+- [Anexo E — Documentación MITECO](thesis/Anexos/Anexo_E_MITECO.pdf)
+- [Paquete completo de entrega](thesis/Grupo1_Deteccion_Incendios.zip)
+
+**Autores del TFM:** Daniel Bravo Quintián, Alejandro Carrasco Ordejón, Pablo Medina de la Iglesia, Juan Peñas Utrilla, Antón Soto Martínez y Adrián Tomás Alonso.
+
+Universidad Complutense de Madrid — Máster en Big Data, Data Science e Inteligencia Artificial, 2025–2026.
+
 ## Resultados principales
 
 ### Clasificación visual
@@ -99,6 +116,15 @@ TFM-FIgLib/
 │   └── README.md
 ├── docs/
 │   └── reproducibility.md
+├── thesis/
+│   ├── Memoria.pdf
+│   ├── Grupo1_Deteccion_Incendios.zip
+│   └── Anexos/
+│       ├── Anexo_A.pdf
+│       ├── Anexo_B_repositorios.pdf
+│       ├── Anexo_C.pdf
+│       ├── Anexo_D_FIgLib.pdf
+│       └── Anexo_E_MITECO.pdf
 ├── requirements.txt
 └── README.md
 ```
@@ -201,11 +227,14 @@ La documentación metodológica completa y las limitaciones de reproducción est
 - Dewangan, A. et al. (2022). *FIgLib & SmokeyNet: Dataset and Deep Learning Model for Real-Time Wildland Fire Smoke Detection*. Remote Sensing, 14(4), 1007. https://doi.org/10.3390/rs14041007
 - Cho, K. et al. (2014). *Learning Phrase Representations using RNN Encoder--Decoder for Statistical Machine Translation*. https://doi.org/10.3115/v1/D14-1179
 
-## Licencia
+## Licencia y autoría
 
-Este repositorio se distribuye bajo licencia **MIT**. Consulta el archivo [`LICENSE`](LICENSE).
+La licencia **MIT** de este repositorio se aplica al **código fuente desarrollado y publicado en este repositorio**. La memoria del TFM, sus anexos, documentación de terceros, datasets y otros materiales externos conservan su propia autoría y sus condiciones de uso originales; no quedan relicenciados automáticamente por la licencia del software. Consulta [`LICENSE`](LICENSE).
 
-## Autor
+### Autor de este módulo
 
-**Antón Soto**  
-Máster en Big Data, Data Science e Inteligencia Artificial — Universidad Complutense de Madrid
+**Antón Soto Martínez**  
+Módulo FIgLib/HPWREN — clasificación visual de humo y detección temporal temprana.  
+Máster en Big Data, Data Science e Inteligencia Artificial — Universidad Complutense de Madrid.
+
+El TFM completo es un trabajo conjunto de los seis autores indicados en la memoria.
